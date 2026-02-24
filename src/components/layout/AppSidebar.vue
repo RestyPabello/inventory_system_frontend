@@ -45,9 +45,7 @@
         />
       </router-link>
     </div>
-    <div
-      class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar"
-    >
+    <div class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
       <nav class="mb-6">
         <div class="flex flex-col gap-4">
           <div v-for="(menuGroup, groupIndex) in menuGroups" :key="groupIndex">
@@ -145,7 +143,7 @@
                       (isExpanded || isHovered || isMobileOpen)
                     "
                   >
-                    <ul class="mt-2 space-y-1 ml-9">
+                    <!-- <ul class="mt-2 space-y-1 ml-9">
                       <li v-for="subItem in item.subItems" :key="subItem.name">
                         <router-link
                           :to="subItem.path"
@@ -198,7 +196,8 @@
                           </span>
                         </router-link>
                       </li>
-                    </ul>
+                    </ul> -->
+                    <SidebarSubmenu v-if="item.subItems" :items="item.subItems" />
                   </div>
                 </transition>
               </li>
@@ -206,7 +205,7 @@
           </div>
         </div>
       </nav>
-      <SidebarWidget v-if="isExpanded || isHovered || isMobileOpen" />
+      <!-- <SidebarWidget v-if="isExpanded || isHovered || isMobileOpen" /> -->
     </div>
   </aside>
 </template>
@@ -233,6 +232,8 @@ import {
 import SidebarWidget from "./SidebarWidget.vue";
 import BoxCubeIcon from "@/icons/BoxCubeIcon.vue";
 import { useSidebar } from "@/composables/useSidebar";
+import SidebarSubmenu from "../layout/Sidebar/SidebarSubmenu.vue";
+
 
 const route = useRoute();
 
@@ -242,42 +243,53 @@ const menuGroups = [
   {
     title: "Menu",
     items: [
-      {
-        icon: GridIcon,
-        name: "Dashboard",
-        subItems: [{ name: "Ecommerce", path: "/", pro: false }],
-      },
-      {
-        icon: CalenderIcon,
-        name: "Calendar",
-        path: "/calendar",
-      },
-      {
-        icon: UserCircleIcon,
-        name: "User Profile",
-        path: "/profile",
-      },
+        {
+            icon: GridIcon,
+            name: "Dashboard",
+            subItems: [{ 
+                name: "E-Commerce", 
+                path: "/",
+            },
+            { 
+                name: "Inventory", 
+                path: "/inventory",
+                // subItems: [{ 
+                //     name: "Dashboard", 
+                //     path: "/",
+                // }],
+            }],
+        },
+        {
+            icon: CalenderIcon,
+            name: "Calendar",
+            path: "/calendar",
+        },
+        {
+            icon: UserCircleIcon,
+            name: "User Profile",
+            path: "/profile",
+        },
 
-      {
-        name: "Forms",
-        icon: ListIcon,
-        subItems: [
-          { name: "Form Elements", path: "/form-elements", pro: false },
-        ],
-      },
-      {
-        name: "Tables",
-        icon: TableIcon,
-        subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
-      },
-      {
-        name: "Pages",
-        icon: PageIcon,
-        subItems: [
-          { name: "Black Page", path: "/blank", pro: false },
-          { name: "404 Page", path: "/error-404", pro: false },
-        ],
-      },
+        {
+            name: "Forms",
+            icon: ListIcon,
+            subItems: [
+            { name: "Form Elements", path: "/form-elements", pro: false },
+            ],
+        },
+        {
+            name: "Tables",
+            icon: TableIcon,
+            subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
+        },
+        {
+            name: "Pages",
+            icon: PageIcon,
+            subItems: [
+            { name: "Black Page", path: "/blank", pro: false },
+            { name: "404 Page", path: "/error-404", pro: false },
+            ],
+        },
     ],
   },
   {
@@ -287,8 +299,8 @@ const menuGroups = [
         icon: PieChartIcon,
         name: "Charts",
         subItems: [
-          { name: "Line Chart", path: "/line-chart", pro: false },
-          { name: "Bar Chart", path: "/bar-chart", pro: false },
+          { name: "Line Chart", path: "/line-chart", },
+          { name: "Bar Chart", path: "/bar-chart", },
         ],
       },
       {
