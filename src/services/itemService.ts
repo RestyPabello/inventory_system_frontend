@@ -2,8 +2,9 @@ import { http } from './http';
 import type { Item } from '@/types/backend/Item';
 import type { FrontendItem } from '@/types/frontend/FrontendItem';
 
-export const getItems = async (): Promise<FrontendItem[]> => {
-    const result = await http.get<Item[]>('/items');
+export const getItems = async (search: string): Promise<FrontendItem[]> => {
+    
+    const result = await http.get('/items', { params: { search } });
 
     return result.data.data.map(data => ({
         id: data.item_id,
