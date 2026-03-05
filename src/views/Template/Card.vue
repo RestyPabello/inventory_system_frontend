@@ -1,46 +1,63 @@
 <template>
-    <div class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] p-2 justify-items-center grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3">
-        <div v-for="item in paginatedItems" :key="item.id" class="card bg-base-100 w-96 shadow-sm">
-            <figure>
-                <img :src="item.image ?? 'https://via.placeholder.com/150'" alt="item image" />
-            </figure>
-            <div class="card-body bg-white text-black dark:bg-[#1D232A] dark:text-white capitalize cursor-default">
-                <h2 class="card-title">
-                    {{ item.name }}
-                    <div class="badge badge-secondary"> {{ item.category }} </div>
-                    <div class="badge badge-primary"> {{ item.brand }} </div>
-                    <div 
-                        class="ml-auto tooltip tooltip-left cursor-help flex items-center justify-center" 
-                        :data-tip="getStockStatusText(item.remaining_stock)"
-                        >
-                        <span class="relative flex h-3 w-3">
-                            <span 
-                                v-if="shouldAnimate(item.remaining_stock)"
-                                :class="getPingClass(item.remaining_stock)"
+    <div class="relative  border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/3 p-2 ">
+        <div class="flex justify-center lg:justify-end mb-4">
+            <SearchBar 
+                class="w-full xl:w-[480px]"
+                v-model="searchText"
+                @search="handleSearch" 
+                placeholderText="Search products..."
+            />
+        </div>
+        <Loading v-if="isLoading" />
+        <div v-else> 
+            <div class="overflow-hidden rounded-xl justify-items-center grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 mt-5">
+                <div v-for="item in paginatedItems" :key="item.id" class="card bg-base-100 w-96 shadow-sm">
+                    <figure>
+                        <img :src="item.image ?? 'https://via.placeholder.com/150'" alt="item image" />
+                    </figure>
+                    <div class="card-body bg-white text-black dark:bg-[#1D232A] dark:text-white capitalize cursor-default">
+                        <h2 class="card-title">
+                            {{ item.name }}
+                            <div class="badge badge-secondary"> {{ item.category }} </div>
+                            <div class="badge badge-primary"> {{ item.brand }} </div>
+                            <div 
+                                class="ml-auto tooltip tooltip-left cursor-help flex items-center justify-center" 
+                                :data-tip="getStockStatusText(item.remaining_stock)"
                                 >
-                            </span>
-                            
-                            <span :class="getStockClass(item.remaining_stock)"></span>
-                        </span>
+                                <span class="relative flex h-3 w-3">
+                                    <span 
+                                        v-if="shouldAnimate(item.remaining_stock)"
+                                        :class="getPingClass(item.remaining_stock)"
+                                        >
+                                    </span>
+                                    
+                                    <span :class="getStockClass(item.remaining_stock)"></span>
+                                </span>
+                            </div>
+                        </h2>
+                        <p> {{ item.description }}</p>
+                        <div class="card-actions justify-start"></div>
+                        <div class="flex gap-2">
+                            <div class="badge badge-outline">Remaning stock </div>
+                            <div class="badge badge-outline"> {{ item.remaining_stock }}</div>
+                        </div>
                     </div>
-                </h2>
-                <p> {{ item.description }}</p>
-                <div class="card-actions justify-start"></div>
-                <div class="flex gap-2">
-                    <div class="badge badge-outline">Remaning stock </div>
-                    <div class="badge badge-outline"> {{ item.remaining_stock }}</div>
                 </div>
+            </div>
+            <div v-if="paginatedItems.length > empty">
+                <AppPagination
+                    :currentPage="currentPage"
+                    :totalItems="items.length"
+                    :perPage="perPage"
+                    @update:page="currentPage = $event"
+                    class="mb-3 mt-10"
+                />
+            </div>
+            <div v-else class="flex flex-col items-center justify-center py-20 text-center">
+                <NoResult  />
             </div>
         </div>
     </div>
-    <AppPagination
-        :currentPage="currentPage"
-        :totalItems="items.length"
-        :perPage="perPage"
-        @update:page="currentPage = $event"
-    />
-
-   
 </template>
 
 <script setup lang="ts">
@@ -48,29 +65,49 @@
     import type { FrontendItem } from '@/types/frontend/FrontendItem';
     import { getItems } from '@/services/itemService';
     import AppPagination from '@/components/ui/AppPagination.vue';
-    
+    import SearchBar from '@/components/layout/header/SearchBar.vue';
+    import Loading from './Loading.vue';
+    import NoResult from '@/components/common/NoResult.vue';
 
     defineOptions({
         name: 'CardComponent',
     });
 
     const items       = ref<FrontendItem[]>([]);
+    const searchText  = ref('');
+    const isLoading   = ref(false);
     const currentPage = ref(1);
-    const perPage     = 10;
+    const perPage     = 9;
+    const empty       = 0;
 
     const LOW_STOCK_LEVEL    = 9;
     const OUT_OF_STOCK_LEVEL = 0;
 
-    onMounted(async () => {
-        items.value = await getItems();
+    const fetchItems = async (searchKeyword: string = '') => {
+        isLoading.value = true;
+        try {
+            items.value = await getItems(searchKeyword);
+        } catch (error) {
+            console.error("Error fetching items:", error);
+        } finally {
+            isLoading.value = false;
+        }
+    };
+
+    onMounted(() => {
+        fetchItems(); 
     });
 
+    const handleSearch = () => {
+        fetchItems(searchText.value); 
+    };
+    
     const paginatedItems = computed(() => {
         const start = (currentPage.value - 1) * perPage
         return items.value.slice(start, start + perPage)
     });
 
-    //Animation for low stock and  out of stock items
+ 
     const shouldAnimate = (stock: number): boolean => {
         return stock <= LOW_STOCK_LEVEL;
     };
@@ -107,22 +144,6 @@
                 return `${base} bg-success`;
         }
     };
-
-    
-
-    // const getStatusLabelClass = (stock: number): string => {
-    //     const base = "text-[10px] font-black uppercase tracking-tighter opacity-70 hidden sm:block";
-        
-    //     switch (true) {
-    //         case (stock <= OUT_OF_STOCK_LEVEL):
-    //             return `${base} text-error`;
-    //         case (stock <= LOW_STOCK_THRESHOLD):
-    //             return `${base} text-warning`;
-    //         default:
-    //             return `${base} text-success`;
-    //     }
-    // };
 </script>
-
 
 
