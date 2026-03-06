@@ -67,7 +67,7 @@
             />
           </svg>
         </button>
-        <SearchBar />
+        <SearchBar class="hidden" />
       </div>
 
       <div
