@@ -8,9 +8,11 @@
                 placeholderText="Search products..."
             />
         </div>
-        <Loading v-if="isLoading" />
+        <div v-if="isLoading" class="flex h-64 w-full items-center justify-center">
+            <Loading /> 
+        </div>
         <div v-else> 
-            <div class="overflow-hidden rounded-xl justify-items-center grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 mt-5">
+            <div class="rounded-xl justify-items-center grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 mt-5 gap-y-6">
                 <div v-for="item in paginatedItems" :key="item.id" class="card bg-base-100 w-96 shadow-sm">
                     <figure>
                         <img :src="item.image ?? 'https://via.placeholder.com/150'" alt="item image" />
