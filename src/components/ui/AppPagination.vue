@@ -31,14 +31,14 @@ const changePage = (page: number) => {
                 Prev
         </button>
 
-        <span class="text-white">
+        <span class="dark:text-white text-gray-800">
             Page {{ currentPage }} of {{ totalPages }}
         </span>
 
         <button
             @click="changePage(currentPage + 1)"
             :disabled="currentPage === totalPages"
-            class="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50">
+            class="px-3 py-1  bg-gray-700 text-white rounded disabled:opacity-50">
             Next
         </button>
     </div>
