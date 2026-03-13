@@ -65,7 +65,7 @@
 <script setup lang="ts">
     import { ref, onMounted, computed } from 'vue';
     import type { FrontendItem } from '@/types/frontend/FrontendItem';
-    import { getItems } from '@/services/itemService';
+    import { getItems } from '@/services/ItemService';
     import AppPagination from '@/components/ui/AppPagination.vue';
     import SearchBar from '@/components/layout/header/SearchBar.vue';
     import Loading from './Loading.vue';

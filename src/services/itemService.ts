@@ -1,5 +1,4 @@
 import { http } from './http';
-import type { Item } from '@/types/backend/Item';
 import type { FrontendItem } from '@/types/frontend/FrontendItem';
 
 export const getItems = async (search: string): Promise<FrontendItem[]> => {
