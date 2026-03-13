@@ -13,35 +13,37 @@
         </div>
         <div v-else> 
             <div class="rounded-xl justify-items-center grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 mt-5 gap-y-6">
-                <div v-for="item in paginatedItems" :key="item.id" class="card bg-base-100 w-96 shadow-sm">
-                    <figure>
-                        <img :src="item.image ?? 'https://via.placeholder.com/150'" alt="item image" />
+                <div v-for="item in paginatedItems" :key="item.id" class="card bg-base-100 w-full sm:w-96 shadow-sm">
+                    <figure class="p-3 dark:bg-[#1D232A] bg-white">
+                        <img 
+                            :src="item.image_url" 
+                            class="w-full aspect-video object-cover" 
+                            alt="item image"
+                        />
                     </figure>
-                    <div class="card-body bg-white text-black dark:bg-[#1D232A] dark:text-white capitalize cursor-default">
-                        <h2 class="card-title">
-                            {{ item.name }}
+                    <div class="card-body bg-white text-black dark:bg-[#1D232A] dark:text-white capitalize cursor-default pl-3 pr-3">
+                        <h2 class="card-title items-start">
+                            <span class="flex-1">{{ item.name }}</span>
                             <div class="badge badge-secondary"> {{ item.category }} </div>
-                            <div class="badge badge-primary"> {{ item.brand }} </div>
+                            <div class="badge badge-primary mr-3"> {{ item.brand }} </div>
                             <div 
-                                class="ml-auto tooltip tooltip-left cursor-help flex items-center justify-center" 
+                                class="ml-auto tooltip tooltip-left cursor-help flex items-center justify-center mt-1.5" 
                                 :data-tip="getStockStatusText(item.remaining_stock)"
-                                >
+                            >
                                 <span class="relative flex h-3 w-3">
-                                    <span 
-                                        v-if="shouldAnimate(item.remaining_stock)"
-                                        :class="getPingClass(item.remaining_stock)"
-                                        >
-                                    </span>
-                                    
+                                    <span v-if="shouldAnimate(item.remaining_stock)" :class="getPingClass(item.remaining_stock)"></span>
                                     <span :class="getStockClass(item.remaining_stock)"></span>
                                 </span>
                             </div>
                         </h2>
-                        <p> {{ item.description }}</p>
-                        <div class="card-actions justify-start"></div>
-                        <div class="flex gap-2">
-                            <div class="badge badge-outline">Remaning stock </div>
-                            <div class="badge badge-outline"> {{ item.remaining_stock }}</div>
+
+                        <p class="line-clamp-2 text-sm opacity-70"> {{ item.description }}</p>
+
+                        <div class="card-actions justify-start mt-2">
+                            <div class="flex gap-2">
+                                <div class="badge badge-outline">Remaning stock </div>
+                                <div class="badge badge-outline"> {{ item.remaining_stock }}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -88,7 +90,15 @@
     const fetchItems = async (searchKeyword: string = '') => {
         isLoading.value = true;
         try {
-            items.value = await getItems(searchKeyword);
+            const response = await getItems(searchKeyword);
+            const baseUrl = import.meta.env.VITE_API_URL;
+
+            items.value = response.map((item: any) => ({
+                ...item,
+                image_url: item.image 
+                    ? `${baseUrl}/storage/${item.image}` 
+                    : 'https://placehold.co/600x400?font=roboto'
+            }));
         } catch (error) {
             console.error("Error fetching items:", error);
         } finally {
