@@ -1,6 +1,7 @@
 <template>
-    <div class="relative  border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/3 p-2 ">
-        <div class="flex justify-center lg:justify-end mb-4">
+    <div class="relative border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/3 p-2">
+        <div class="flex justify-between mb-4">
+            <BaseButton label="Add Product"> </BaseButton>
             <SearchBar 
                 class="w-full xl:w-[480px]"
                 v-model="searchText"
@@ -72,6 +73,7 @@
     import SearchBar from '@/components/layout/header/SearchBar.vue';
     import Loading from './Loading.vue';
     import NoResult from '@/components/common/NoResult.vue';
+    import BaseButton from '@/components/ui/BaseButton.vue';
 
     defineOptions({
         name: 'CardComponent',
@@ -159,3 +161,4 @@
 </script>
 
 
+``
