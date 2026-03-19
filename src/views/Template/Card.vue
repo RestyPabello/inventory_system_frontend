@@ -1,7 +1,7 @@
 <template>
     <div class="relative border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/3 p-2">
         <div class="flex justify-between mb-4">
-            <BaseButton label="Add Product"> </BaseButton>
+            <BaseButton label="Add Product" @click="openModal" />
             <SearchBar 
                 class="w-full xl:w-[480px]"
                 v-model="searchText"
@@ -62,11 +62,99 @@
                 <NoResult  />
             </div>
         </div>
+        <BaseModal 
+                v-model="isModalOpen" 
+                title="Add New Product"
+                confirmLabel="Save Product"
+                maxWidth="max-w-4xl"
+                @confirm="handleSave"
+                :center-title="true"
+            >
+            <div class="max-h-[70vh] overflow-y-auto p-4 custom-scrollbar">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
+                    <div class="md:col-span-2">
+                        <BaseImageUpload 
+                            label="Product Image"
+                            v-model="formData.image"
+                        />
+                    </div>
+                    <div class="space-y-4">
+                        <BaseInput 
+                            label="Product Name" 
+                            v-model="formData.name" 
+                            placeholder="e.g. Piattos" 
+                        />
+                        <BaseSelect 
+                            label="Category" 
+                            v-model="formData.category" 
+                            :options="categoryOptions" 
+                            :placeholder="'Select Category'"
+                        />
+                        <BaseInput 
+                            label="Price" 
+                            type="number" 
+                            v-model="formData.price" 
+                            placeholder="0.00" 
+                        />
+                        <BaseSelect 
+                            label="Status" 
+                            v-model="formData.status" 
+                            :options="statusOptions" 
+                            :placeholder="'Select Status'"
+                        />
+                        <BaseInput 
+                            label="Expiration Date" 
+                            type="date"
+                            v-model="formData.expires_at" 
+                        />
+                    </div>
+
+                    <div class="space-y-4">
+                        <BaseInput 
+                            label="Product Brand" 
+                            v-model="formData.brand" 
+                            placeholder="e.g. Rubina" 
+                        />
+                        <BaseSelect 
+                            label="Unit" 
+                            v-model="formData.unit" 
+                            :options="unitOptions" 
+                            :placeholder="'Select Unit'"
+                        />
+                        <BaseInput 
+                            label="Unit Value" 
+                            type="number" 
+                            v-model="formData.value" 
+                            placeholder="0.00" 
+                        />
+                        <BaseInput 
+                            label="Quantity / Stock" 
+                            type="number" 
+                            v-model="formData.quantity" 
+                            placeholder="0.00" 
+                        />
+                    <BaseInput 
+                            label="Purchase Date" 
+                            type="date"
+                            v-model="formData.purchased_at" 
+                        />
+                    </div>
+                    <div class="md:col-span-2">
+                        <BaseTextArea 
+                            label="Description"
+                            v-model="formData.description"
+                            placeholder="Enter description"
+                        >
+                        </BaseTextArea>
+                    </div>
+                </div>
+            </div>
+        </BaseModal>
     </div>
 </template>
 
 <script setup lang="ts">
-    import { ref, onMounted, computed } from 'vue';
+    import { ref, onMounted, computed, reactive } from 'vue';
     import type { FrontendItem } from '@/types/frontend/FrontendItem';
     import { getItems } from '@/services/ItemService';
     import AppPagination from '@/components/ui/AppPagination.vue';
@@ -74,15 +162,61 @@
     import Loading from './Loading.vue';
     import NoResult from '@/components/common/NoResult.vue';
     import BaseButton from '@/components/ui/BaseButton.vue';
+    import BaseModal from '@/components/ui/BaseModal.vue';
+    import BaseInput from '@/components/ui/BaseInput.vue';
+    import BaseTextArea from '@/components/ui/BaseTextArea.vue';
+    import BaseSelect from '@/components/ui/BaseSelect.vue';
+    import BaseImageUpload from '@/components/ui/BaseImageUpload.vue';
 
     defineOptions({
         name: 'CardComponent',
     });
 
+    const categoryOptions = [
+        { label: 'Snacks', value: 'snacks' },
+        { label: 'Drinks', value: 'drinks' },
+        { label: 'Personal Care', value: 'personal_care' },
+        { label: 'Electronics', value: 'electronics' }
+    ];
+
+    const unitOptions = [
+        { label: 'Sale', value: 'sale' },
+        { label: 'New Arrival', value: 'new' },
+        { label: 'Limited Stock', value: 'limited' }
+    ];
+
+    const statusOptions = [
+        { label: 'Available Stock', value: 'available_stock' },
+        { label: 'Low Stock', value: 'low_stock' },
+        { label: 'Out of Stock', value: 'out_of_stock' }
+    ];
+
+    const formData = reactive({
+        name: '',
+        brand: '',
+        price: '',
+        category: '',
+        stock: '',
+        quantity: 0,
+        unit: '',
+        value: '',
+        status: '',
+        // tags: [] as any[],
+        image: null as File | null,
+        description: '',
+        expires_at: '',
+        purchased_at: ''
+    });
+
+    const handleSave = () => {
+        console.log('Saving Data:', formData)
+    }
+
     const items       = ref<FrontendItem[]>([]);
     const searchText  = ref('');
     const isLoading   = ref(false);
     const currentPage = ref(1);
+    const isModalOpen = ref(false)
     const perPage     = 9;
     const empty       = 0;
 
@@ -121,7 +255,6 @@
         return items.value.slice(start, start + perPage)
     });
 
- 
     const shouldAnimate = (stock: number): boolean => {
         return stock <= LOW_STOCK_LEVEL;
     };
@@ -158,7 +291,19 @@
                 return `${base} bg-success`;
         }
     };
+
+    const openModal = () => {
+        isModalOpen.value = true
+    }
 </script>
 
-
-``
+<style scoped>
+    .fade-enter-active, 
+    .fade-leave-active { 
+        transition: opacity 0.3s ease; 
+    }
+    .fade-enter-from, 
+    .fade-leave-to { 
+        opacity: 0; 
+    }
+</style>
