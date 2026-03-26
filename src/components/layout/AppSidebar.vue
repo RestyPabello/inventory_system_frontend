@@ -247,12 +247,12 @@ const menuGroups = [
             icon: GridIcon,
             name: "Dashboard",
             subItems: [{ 
-                name: "E-Commerce", 
-                path: "/",
-            },
-            { 
                 name: "Inventory", 
-                path: "/inventory",
+                path: "/",
+                
+            }, { 
+                name: "E-Commerce", 
+                path: "/ecommerce",
                 // subItems: [{ 
                 //     name: "Dashboard", 
                 //     path: "/",
