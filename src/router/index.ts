@@ -7,19 +7,19 @@ const router = createRouter({
   },
   routes: [
     {
-      path: '/',
-      name: 'Ecommerce',
-      component: () => import('../views/Ecommerce.vue'),
-      meta: {
-        title: 'eCommerce Dashboard',
-      },
-    },
-    {
-        path: '/inventory',
+        path: '/',
         name: 'Inventory',
         component: () => import('../views/Systems/Inventory.vue'),
         meta: {
             title: 'Inventory Page',
+        },
+    },
+    {
+        path: '/ecommerce',
+        name: 'Ecommerce',
+        component: () => import('../views/Ecommerce.vue'),
+        meta: {
+            title: 'eCommerce Dashboard',
         },
     },
     {
