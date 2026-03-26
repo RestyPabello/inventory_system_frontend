@@ -12,3 +12,19 @@ export interface FrontendItem {
     expires_at: string;
     purchased_at: string;
 }
+
+export interface CreateItemRequest {
+    id: number | null;
+    name: string;
+    brand: string;
+    unit_id: string;
+    category_id: string;
+    image: File | null; 
+    description: string | null;
+    price: number | string;
+    status: string | null;
+    quantity: number;
+    value: string | number; 
+    expires_at: string;
+    purchased_at: string;
+}
