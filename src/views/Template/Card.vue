@@ -65,10 +65,11 @@
         <BaseModal 
                 v-model="isModalOpen" 
                 title="Add New Product"
-                confirmLabel="Save Product"
                 maxWidth="max-w-4xl"
                 @confirm="handleSave"
                 :center-title="true"
+                :is-loading="isSubmitting"
+                :confirm-label="isSubmitting ? 'Saving...' : 'Save Product'"
             >
             <div class="max-h-[70vh] overflow-y-auto p-4 custom-scrollbar">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
@@ -209,13 +210,14 @@
         purchased_at: ''
     });
 
-    const items       = ref<FrontendItem[]>([]);
-    const searchText  = ref('');
-    const isLoading   = ref(false);
-    const currentPage = ref(1);
-    const isModalOpen = ref(false)
-    const perPage     = 10;
-    const empty       = 0;
+    const items        = ref<FrontendItem[]>([]);
+    const searchText   = ref('');
+    const isLoading    = ref(false);
+    const currentPage  = ref(1);
+    const isModalOpen  = ref(false)
+    const perPage      = 10;
+    const empty        = 0;
+    const isSubmitting = ref(false);
 
     const LOW_STOCK_LEVEL    = 9;
     const OUT_OF_STOCK_LEVEL = 0;
@@ -284,7 +286,7 @@
                 return `${base} bg-error`;
             case (stock <= LOW_STOCK_LEVEL):
                 return `${base} bg-warning animate-pulse`;
-            default:
+            default: 
                 return `${base} bg-success`;
         }
     };
@@ -294,7 +296,8 @@
     }
 
     const handleSave = async () => {
-        isLoading.value = true;
+        isLoading.value    = true;
+        isSubmitting.value = true;
 
         try {
             const newItem = await addItem(formData);
@@ -307,7 +310,8 @@
             console.error('Save failed:', error);
             alert(error.response?.data?.message || 'Something went wrong while saving.');
         } finally {
-            isLoading.value = false;
+            isLoading.value    = false;
+            isSubmitting.value = false;
         }
     }
 

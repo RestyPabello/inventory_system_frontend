@@ -36,7 +36,12 @@
                         Cancel
                     </button>
                     
-                    <BaseButton :label="confirmLabel" @click="$emit('confirm')" />
+                    <BaseButton 
+                        :label="confirmLabel" 
+                        :loading="isLoading" 
+                        :disabled="isLoading"
+                        @click="$emit('confirm')" 
+                    />
                 </div>
             </div>
         </div>
@@ -70,7 +75,11 @@
 		centerTitle: { 
 			type: Boolean, 
 			default: false 
-		}
+		},
+        isLoading: {
+            type: Boolean,
+            default: false
+        }
     });
 
     defineEmits(['update:modelValue', 'confirm']);
