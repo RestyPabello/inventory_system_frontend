@@ -86,7 +86,7 @@
                         />
                         <BaseSelect 
                             label="Category" 
-                            v-model="formData.category" 
+                            v-model="formData.category_id" 
                             :options="categoryOptions" 
                             :placeholder="'Select Category'"
                         />
@@ -117,7 +117,7 @@
                         />
                         <BaseSelect 
                             label="Unit" 
-                            v-model="formData.unit" 
+                            v-model="formData.unit_id" 
                             :options="unitOptions" 
                             :placeholder="'Select Unit'"
                         />
@@ -156,7 +156,7 @@
 <script setup lang="ts">
     import { ref, onMounted, computed, reactive } from 'vue';
     import type { FrontendItem } from '@/types/frontend/FrontendItem';
-    import { getItems } from '@/services/ItemService';
+    import { getItems, addItem } from '@/services/ItemService';
     import AppPagination from '@/components/ui/AppPagination.vue';
     import SearchBar from '@/components/layout/header/SearchBar.vue';
     import Loading from './Loading.vue';
@@ -173,16 +173,17 @@
     });
 
     const categoryOptions = [
-        { label: 'Snacks', value: 'snacks' },
-        { label: 'Drinks', value: 'drinks' },
-        { label: 'Personal Care', value: 'personal_care' },
-        { label: 'Electronics', value: 'electronics' }
+        { label: 'Snacks', value: 2 },
+        { label: 'Drinks', value: 1 },
+        { label: 'Personal Care', value: 3 },
+        { label: 'Electronics', value: 4 }
     ];
 
     const unitOptions = [
-        { label: 'Sale', value: 'sale' },
-        { label: 'New Arrival', value: 'new' },
-        { label: 'Limited Stock', value: 'limited' }
+        { label: 'Liter', value: 5 },
+        { label: 'Gram', value: 1 },
+        { label: 'Milliliter ', value: 2 },
+        { label: 'Kilogram ', value: 6 },
     ];
 
     const statusOptions = [
@@ -194,11 +195,11 @@
     const formData = reactive({
         name: '',
         brand: '',
-        price: '',
-        category: '',
+        price: 0,
+        category_id: '',
         stock: '',
         quantity: 0,
-        unit: '',
+        unit_id: '',
         value: '',
         status: '',
         // tags: [] as any[],
@@ -208,22 +209,18 @@
         purchased_at: ''
     });
 
-    const handleSave = () => {
-        console.log('Saving Data:', formData)
-    }
-
     const items       = ref<FrontendItem[]>([]);
     const searchText  = ref('');
     const isLoading   = ref(false);
     const currentPage = ref(1);
     const isModalOpen = ref(false)
-    const perPage     = 9;
+    const perPage     = 10;
     const empty       = 0;
 
     const LOW_STOCK_LEVEL    = 9;
     const OUT_OF_STOCK_LEVEL = 0;
 
-    const fetchItems = async (searchKeyword: string = '') => {
+    const fetchItems = async(searchKeyword: string = '') => {
         isLoading.value = true;
         try {
             const response = await getItems(searchKeyword);
@@ -295,6 +292,33 @@
     const openModal = () => {
         isModalOpen.value = true
     }
+
+    const handleSave = async () => {
+        isLoading.value = true;
+
+        try {
+            const newItem = await addItem(formData);
+            
+            console.log('Saved successfully:', newItem);
+            alert('Product saved successfully!');
+            
+            resetFormData();
+        } catch (error: any) {
+            console.error('Save failed:', error);
+            alert(error.response?.data?.message || 'Something went wrong while saving.');
+        } finally {
+            isLoading.value = false;
+        }
+    }
+
+    const resetFormData = () => {
+        Object.assign(formData, {
+            name: '', brand: '', price: '', category: '', 
+            quantity: 0, unit: '', value: '', status: '',
+            image: null, description: '', expires_at: '', purchased_at: ''
+        });
+    };
+
 </script>
 
 <style scoped>
