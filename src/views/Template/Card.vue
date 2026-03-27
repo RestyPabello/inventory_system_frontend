@@ -14,7 +14,7 @@
         </div>
         <div v-else> 
             <div class="rounded-xl justify-items-center grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 mt-5 gap-y-6">
-                <div v-for="item in paginatedItems" :key="item.id" class="card bg-base-100 w-full sm:w-96 shadow-sm">
+                <div v-for="item in items" :key="item.id" class="card bg-base-100 w-full sm:w-96 shadow-sm">
                     <figure class="p-3 dark:bg-[#1D232A] bg-white">
                         <img 
                             :src="item.image_url" 
@@ -49,12 +49,12 @@
                     </div>
                 </div>
             </div>
-            <div v-if="paginatedItems.length > empty">
+            <div v-if="items.length > empty">
                 <AppPagination
                     :currentPage="currentPage"
-                    :totalItems="items.length"
+                    :totalItems="totalItems"
                     :perPage="perPage"
-                    @update:page="currentPage = $event"
+                    @update:page="handlePageChange"
                     class="mb-3 mt-10"
                 />
             </div>
@@ -215,8 +215,9 @@
     const isLoading    = ref(false);
     const currentPage  = ref(1);
     const isModalOpen  = ref(false)
-    const perPage      = 10;
+    const perPage      = 9;
     const empty        = 0;
+    const totalItems = ref(0);
     const isSubmitting = ref(false);
 
     const LOW_STOCK_LEVEL    = 9;
@@ -225,10 +226,12 @@
     const fetchItems = async(searchKeyword: string = '') => {
         isLoading.value = true;
         try {
-            const response = await getItems(searchKeyword);
+            const response = await getItems(searchKeyword, currentPage.value);
             const baseUrl = import.meta.env.VITE_API_URL;
 
-            items.value = response.map((item: any) => ({
+            totalItems.value = response.total;
+
+            items.value = response.data.map((item: any) => ({
                 ...item,
                 image_url: item.image 
                     ? `${baseUrl}/storage/${item.image}` 
@@ -246,13 +249,14 @@
     });
 
     const handleSearch = () => {
+        currentPage.value = 1;
         fetchItems(searchText.value); 
     };
-    
-    const paginatedItems = computed(() => {
-        const start = (currentPage.value - 1) * perPage
-        return items.value.slice(start, start + perPage)
-    });
+
+    const handlePageChange = (newPage: number) => {
+        currentPage.value = newPage;
+        fetchItems(searchText.value);
+    };
 
     const shouldAnimate = (stock: number): boolean => {
         return stock <= LOW_STOCK_LEVEL;
