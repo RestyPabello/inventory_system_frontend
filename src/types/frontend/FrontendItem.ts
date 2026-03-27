@@ -13,6 +13,16 @@ export interface FrontendItem {
     purchased_at: string;
 }
 
+export interface PaginatedItems {
+    data: FrontendItem[]; 
+    total: number;        
+    per_page: number;
+    current_page: number;
+    last_page: number;
+    from: number;
+    to: number;
+}
+
 export interface CreateItemRequest {
     id: number | null;
     name: string;

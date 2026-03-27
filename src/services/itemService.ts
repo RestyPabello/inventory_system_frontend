@@ -1,24 +1,32 @@
 import { http } from './http';
-import type {  FrontendItem, CreateItemRequest } from '@/types/frontend/FrontendItem';
+import type {  PaginatedItems, CreateItemRequest } from '@/types/frontend/FrontendItem';
 
-export const getItems = async (search: string): Promise<FrontendItem[]> => {
-    
-    const result = await http.get('/items', { params: { search } });
+export const getItems = async (search: string = '', page: number = 1): Promise<PaginatedItems> => {
+    const result = await http.get('/items', { params: { search, page } });
 
-    return result.data.data.map(data => ({
-        id: data.item_id,
-        name: data.item_name,
-        brand: data.item_brand ?? null,
-        unit: data.unit_name ?? null,
-        category: data.category_name ?? "N/A",
-        image: data.image ?? null,
-        description: data.description ?? null,
-        price: data.price ?? 0,
-        status: data.status ?? null,
-        remaining_stock: data.quantity ?? 0,
-        expires_at: data.expires_at ?? "",
-        purchased_at: data.purchased_at ?? "",
-    }));
+    return {
+        data: result.data.data.map(data => ({
+            id: data.item_id,
+            name: data.item_name,
+            brand: data.item_brand ?? null,
+            unit: data.unit_name ?? null,
+            category: data.category_name ?? "N/A",
+            image: data.image ?? null,
+            description: data.description ?? null,
+            price: Number(data.price) || 0,
+            status: data.status ?? null,
+            remaining_stock: Number(data.quantity) || 0,
+            expires_at: data.expires_at ?? "",
+            purchased_at: data.purchased_at ?? "",
+        })),
+
+        total: result.data.total,
+        per_page: result.data.per_page,
+        current_page: result.data.current_page,
+        last_page: result.data.last_page,
+        from: result.data.from,
+        to: result.data.to,
+    }
 };
 
 export const addItem = async (data: CreateItemRequest): Promise<any> => {
