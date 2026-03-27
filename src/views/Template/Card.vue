@@ -306,6 +306,8 @@
             alert('Product saved successfully!');
             
             resetFormData();
+
+            isModalOpen.value = false;
         } catch (error: any) {
             console.error('Save failed:', error);
             alert(error.response?.data?.message || 'Something went wrong while saving.');
