@@ -24,9 +24,17 @@
                     </figure>
                     <div class="card-body bg-white text-black dark:bg-[#1D232A] dark:text-white capitalize cursor-default pl-3 pr-3">
                         <h2 class="card-title items-start">
-                            <span class="flex-1">{{ item.name }}</span>
-                            <div class="badge badge-secondary"> {{ item.category }} </div>
-                            <div class="badge badge-primary mr-3"> {{ item.brand }} </div>
+                            <div class="flex-1 tooltip tooltip-bottom" :data-tip="item.name">
+                                <span class="flex-1 line-clamp-2 cursor-help">
+                                    {{ item.name }}
+                                </span>
+                            </div>
+                            <div class="badge badge-secondary"> 
+                                {{ item.category }} 
+                            </div>
+                            <div class="badge badge-primary mr-3"> 
+                                {{ item.brand }} 
+                            </div>
                             <div 
                                 class="ml-auto tooltip tooltip-left cursor-help flex items-center justify-center mt-1.5" 
                                 :data-tip="getStockStatusText(item.remaining_stock)"
