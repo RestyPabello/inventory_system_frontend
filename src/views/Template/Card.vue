@@ -304,16 +304,16 @@
         isSubmitting.value = true;
 
         try {
-            const newItem = await addItem(formData);
-            
-            console.log('Saved successfully:', newItem);
+            await addItem(formData);
             alert('Product saved successfully!');
             
             resetFormData();
-
             isModalOpen.value = false;
+
+            currentPage.value = 1;
+            await fetchItems();
+
         } catch (error: any) {
-            console.error('Save failed:', error);
             alert(error.response?.data?.message || 'Something went wrong while saving.');
         } finally {
             isLoading.value    = false;
