@@ -160,6 +160,20 @@
             </div>
         </BaseModal>
     </div>
+
+    <AppToast 
+        :show="showSuccessAlert" 
+        type="success" 
+        :message="alertMessage" 
+        @close="showSuccessAlert = false" 
+    />
+
+    <AppToast 
+        :show="showErrorAlert" 
+        type="error" 
+        :message="alertMessage" 
+        @close="showErrorAlert = false" 
+    />
 </template>
 
 <script setup lang="ts">
@@ -176,6 +190,7 @@
     import BaseTextArea from '@/components/ui/BaseTextArea.vue';
     import BaseSelect from '@/components/ui/BaseSelect.vue';
     import BaseImageUpload from '@/components/ui/BaseImageUpload.vue';
+    import AppToast from '@/components/ui/AppToast.vue';
 
     defineOptions({
         name: 'CardComponent',
@@ -223,10 +238,27 @@
     const isLoading    = ref(false);
     const currentPage  = ref(1);
     const isModalOpen  = ref(false)
-    const perPage      = 9;
-    const empty        = 0;
-    const totalItems = ref(0);
+    const totalItems   = ref(0);
     const isSubmitting = ref(false);
+
+    const showSuccessAlert = ref(false);
+    const showErrorAlert   = ref(false);
+    const alertMessage     = ref('');
+
+    const notifySuccess = (msg: string) => {
+        alertMessage.value = msg;
+        showSuccessAlert.value = true;
+        setTimeout(() => { showSuccessAlert.value = false; }, 3000);
+    };
+
+    const notifyError = (msg: string) => {
+        alertMessage.value = msg;
+        showErrorAlert.value = true;
+        setTimeout(() => { showErrorAlert.value = false; }, 5000);
+    };
+
+    const perPage = 9;
+    const empty   = 0;
 
     const LOW_STOCK_LEVEL    = 9;
     const OUT_OF_STOCK_LEVEL = 0;
@@ -313,7 +345,7 @@
 
         try {
             await addItem(formData);
-            alert('Product saved successfully!');
+            notifySuccess('Product has been saved successfully!');
             
             resetFormData();
             isModalOpen.value = false;
@@ -322,7 +354,8 @@
             await fetchItems();
 
         } catch (error: any) {
-            alert(error.response?.data?.message || 'Something went wrong while saving.');
+            const errorMessage = error.response?.data?.message || 'System is busy. Please try again later.';
+            notifyError(errorMessage);
         } finally {
             isLoading.value    = false;
             isSubmitting.value = false;
