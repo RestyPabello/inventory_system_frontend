@@ -15,11 +15,18 @@
         <div v-else> 
             <div class="rounded-xl justify-items-center grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 mt-5 gap-y-6">
                 <div v-for="item in items" :key="item.id" class="card bg-base-100 w-full sm:w-96 shadow-sm">
-                    <figure class="p-3 dark:bg-[#1D232A] bg-white">
+                    <figure class="p-3 dark:bg-[#1D232A] bg-white relative group overflow-hidden">
                         <img 
                             :src="item.image_url" 
                             class="w-full aspect-video object-cover" 
                             alt="item image"
+                        />
+                        <BaseEditButton 
+                            @click="$emit('edit', item)"
+                            class="absolute top-5 right-5 
+                                opacity-0 group-hover:opacity-100 
+                                translate-y-2 group-hover:translate-y-0 
+                                transition-all duration-300 shadow-xl"
                         />
                     </figure>
                     <div class="card-body bg-white text-black dark:bg-[#1D232A] dark:text-white capitalize cursor-default pl-3 pr-3">
@@ -190,6 +197,7 @@
     import BaseTextArea from '@/components/ui/BaseTextArea.vue';
     import BaseSelect from '@/components/ui/BaseSelect.vue';
     import BaseImageUpload from '@/components/ui/BaseImageUpload.vue';
+    import BaseEditButton from '@/components/ui/BaseEditButton.vue';
     import AppToast from '@/components/ui/AppToast.vue';
 
     defineOptions({
