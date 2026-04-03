@@ -3,12 +3,12 @@ export interface FrontendItem {
     name: string,
     brand: string,
     unit: string,
-    category: string,
+    category_name: string,
     image: string | null;
     description: string | null;
     price: number;
     status: string | null;
-    remaining_stock: number;     
+    quantity: number;     
     expires_at: string;
     purchased_at: string;
 }
@@ -38,3 +38,19 @@ export interface CreateItemRequest {
     expires_at: string;
     purchased_at: string;
 }
+
+export interface UpdateItemRequest {
+    name: string;
+    brand: string;
+    price: number;
+    category_id: number | string;
+    quantity: number;
+    unit_id: number | string;
+    value: string | number;
+    status: string;
+    description?: string;
+    expires_at?: string;
+    purchased_at?: string;
+    image?: File | null; 
+}
+

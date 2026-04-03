@@ -22,7 +22,7 @@
                             alt="item image"
                         />
                         <BaseEditButton 
-                            @click="$emit('edit', item)"
+                            @click="handleEdit(item)"
                             class="absolute top-5 right-5 
                                 opacity-0 group-hover:opacity-100 
                                 translate-y-2 group-hover:translate-y-0 
@@ -37,18 +37,18 @@
                                 </span>
                             </div>
                             <div class="badge badge-secondary"> 
-                                {{ item.category }} 
+                                {{ item.category_name }} 
                             </div>
                             <div class="badge badge-primary mr-3"> 
                                 {{ item.brand }} 
                             </div>
                             <div 
                                 class="ml-auto tooltip tooltip-left cursor-help flex items-center justify-center mt-1.5" 
-                                :data-tip="getStockStatusText(item.remaining_stock)"
+                                :data-tip="getStockStatusText(item.quantity)"
                             >
                                 <span class="relative flex h-3 w-3">
-                                    <span v-if="shouldAnimate(item.remaining_stock)" :class="getPingClass(item.remaining_stock)"></span>
-                                    <span :class="getStockClass(item.remaining_stock)"></span>
+                                    <span v-if="shouldAnimate(item.quantity)" :class="getPingClass(item.quantity)"></span>
+                                    <span :class="getStockClass(item.quantity)"></span>
                                 </span>
                             </div>
                         </h2>
@@ -58,7 +58,7 @@
                         <div class="card-actions justify-start mt-2">
                             <div class="flex gap-2">
                                 <div class="badge badge-outline">Remaning stock </div>
-                                <div class="badge badge-outline"> {{ item.remaining_stock }}</div>
+                                <div class="badge badge-outline"> {{ item.quantity }}</div>
                             </div>
                         </div>
                     </div>
@@ -234,7 +234,6 @@
         unit_id: '',
         value: '',
         status: '',
-        // tags: [] as any[],
         image: null as File | null,
         description: '',
         expires_at: '',
@@ -252,6 +251,9 @@
     const showSuccessAlert = ref(false);
     const showErrorAlert   = ref(false);
     const alertMessage     = ref('');
+
+    const isEditMode = ref(false);
+    const editingId  = ref<number | null>(null);
 
     const notifySuccess = (msg: string) => {
         alertMessage.value = msg;
@@ -344,8 +346,11 @@
     };
 
     const openModal = () => {
-        isModalOpen.value = true
-    }
+        isEditMode.value = false;
+        editingId.value = null;
+        resetFormData();
+        isModalOpen.value = true;
+    };
 
     const handleSave = async () => {
         isLoading.value    = true;
@@ -368,11 +373,22 @@
             isLoading.value    = false;
             isSubmitting.value = false;
         }
+    };
+
+    const handleEdit = (item: any) => {
+        isEditMode.value = true;
+        editingId.value = item.id; 
+
+        Object.assign(formData, item);
+        
+        formData.image = null; 
+
+        isModalOpen.value = true; 
     }
 
     const resetFormData = () => {
         Object.assign(formData, {
-            name: '', brand: '', price: '', category: '', 
+            name: '', brand: '', price: '', category_id: '', 
             quantity: 0, unit: '', value: '', status: '',
             image: null, description: '', expires_at: '', purchased_at: ''
         });
