@@ -5,7 +5,7 @@ export interface FrontendItem {
     unit: string,
     category_name: string,
     image: string | null;
-    description: string | null;
+    item_description: string | null;
     price: number;
     status: string | null;
     quantity: number;     
@@ -30,7 +30,7 @@ export interface CreateItemRequest {
     unit_id: string;
     category_id: string;
     image: File | null; 
-    description: string | null;
+    item_description: string | null;
     price: number | string;
     status: string | null;
     quantity: number;
@@ -48,7 +48,7 @@ export interface UpdateItemRequest {
     unit_id: number | string;
     value: string | number;
     status: string;
-    description?: string;
+    item_description?: string;
     expires_at?: string;
     purchased_at?: string;
     image?: File | null; 

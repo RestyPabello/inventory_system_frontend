@@ -14,7 +14,7 @@ export const getItems = async (search: string = '', page: number = 1): Promise<P
             category_name: data.category_name ?? "N/A",
             category_id: data.category_id,
             image: data.image ?? null,
-            description: data.description ?? null,
+            item_description: data.item_description ?? null,
             price: Number(data.price) || 0,
             status: data.status ?? null,
             quantity: Number(data.quantity) || 0,
@@ -44,7 +44,7 @@ export const addItem = async (data: CreateItemRequest): Promise<any> => {
     fd.append('status', data.status ?? '');
     fd.append('expires_at', data.expires_at ?? '');
     fd.append('purchased_at', data.purchased_at ?? '');
-    fd.append('item_description', data.description ?? '')
+    fd.append('item_description', data.item_description ?? '')
     
     if (data.image instanceof File) {
         fd.append('image', data.image);
@@ -62,7 +62,7 @@ export const addItem = async (data: CreateItemRequest): Promise<any> => {
         category_id: result.data.category_id,   
         unit_id: result.data.unit_id,
         image: variant.image_url ?? null,
-        description: result.data.description ?? null,
+        item_description: result.data.item_description ?? null,
         price: Number(variant.price) || 0,
         status: stock.status ?? null,
         quantity: Number(stock.quantity) || 0,
@@ -84,7 +84,7 @@ export const updateItem = async (id: number, data: UpdateItemRequest): Promise<a
     fd.append('status', data.status ?? '');
     fd.append('expires_at', data.expires_at ?? '');
     fd.append('purchased_at', data.purchased_at ?? '');
-    fd.append('item_description', data.description ?? '');
+    fd.append('item_description', data.item_description ?? '');
 
     if (data.image instanceof File) {
         fd.append('image', data.image);
@@ -102,7 +102,7 @@ export const updateItem = async (id: number, data: UpdateItemRequest): Promise<a
         category_id: result.data.category_id,   
         unit_id: result.data.unit_id,
         image: variant.image_url ?? null,
-        description: result.data.description ?? null,
+        item_description: result.data.item_description ?? null,
         price: Number(variant.price) || 0,
         status: stock.status ?? null,
         quantity: Number(stock.quantity) || 0,
