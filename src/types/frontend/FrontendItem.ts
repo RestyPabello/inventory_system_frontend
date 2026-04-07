@@ -2,7 +2,8 @@ export interface FrontendItem {
     id: number,
     name: string,
     brand: string,
-    unit: string,
+    unit_id: string,
+    category_id: number,
     category_name: string,
     image: string | null;
     item_description: string | null;
