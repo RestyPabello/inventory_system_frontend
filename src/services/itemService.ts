@@ -14,6 +14,7 @@ export const getItems = async (search: string = '', page: number = 1): Promise<P
             category_name: data.category_name ?? "N/A",
             category_id: data.category_id,
             image: data.image ?? null,
+            item_variant_value:  Number(data.item_variant_value) || 0,
             item_description: data.item_description ?? null,
             price: Number(data.price) || 0,
             status: data.status ?? null,
@@ -39,7 +40,7 @@ export const addItem = async (data: CreateItemRequest): Promise<any> => {
     fd.append('price', String(data.price ?? 0));
     fd.append('category_id', String(data.category_id)); 
     fd.append('unit_id', String(data.unit_id));    
-    fd.append('value', String(data.value ?? 0));
+    fd.append('item_variant_value', String(data.item_variant_value ?? 0));
     fd.append('quantity', String(data.quantity ?? 0));
     fd.append('status', data.status ?? '');
     fd.append('expires_at', data.expires_at ?? '');
@@ -79,7 +80,7 @@ export const updateItem = async (id: number, data: UpdateItemRequest): Promise<a
     fd.append('price', String(data.price ?? 0));
     fd.append('category_id', String(data.category_id)); 
     fd.append('unit_id', String(data.unit_id));    
-    fd.append('value', String(data.value ?? 0));
+    fd.append('item_variant_value', String(data.item_variant_value ?? 0));
     fd.append('quantity', String(data.quantity ?? 0));
     fd.append('status', data.status ?? '');
     fd.append('expires_at', data.expires_at ?? '');

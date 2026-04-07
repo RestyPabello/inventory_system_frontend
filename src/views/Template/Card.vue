@@ -144,7 +144,7 @@
                         <BaseInput 
                             label="Unit Value" 
                             type="number" 
-                            v-model="formData.value" 
+                            v-model="formData.item_variant_value" 
                             placeholder="0.00" 
                         />
                         <BaseInput 
@@ -236,7 +236,7 @@
         stock: '',
         quantity: 0,
         unit_id: '',
-        value: '',
+        item_variant_value: '',
         status: '',
         image: null as File | null,
         item_description: '',

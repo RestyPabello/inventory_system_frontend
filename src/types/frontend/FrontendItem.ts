@@ -34,7 +34,7 @@ export interface CreateItemRequest {
     price: number | string;
     status: string | null;
     quantity: number;
-    value: string | number; 
+    item_variant_value: string | number; 
     expires_at: string;
     purchased_at: string;
 }
@@ -46,7 +46,7 @@ export interface UpdateItemRequest {
     category_id: number | string;
     quantity: number;
     unit_id: number | string;
-    value: string | number;
+    item_variant_value: string | number;
     status: string;
     item_description?: string;
     expires_at?: string;
