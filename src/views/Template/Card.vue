@@ -53,7 +53,11 @@
                             </div>
                         </h2>
 
-                        <p class="line-clamp-2 text-sm opacity-70"> {{ item.description }}</p>
+                        <div class="flex-1 tooltip tooltip-bottom" :data-tip="item.item_description">
+                            <p class="line-clamp-2 text-sm opacity-70 cursor-help">
+                                {{ item.item_description }}
+                            </p>
+                        </div>
 
                         <div class="card-actions justify-start mt-2">
                             <div class="flex gap-2">
@@ -158,7 +162,7 @@
                     <div class="md:col-span-2">
                         <BaseTextArea 
                             label="Description"
-                            v-model="formData.description"
+                            v-model="formData.item_description"
                             placeholder="Enter description"
                         >
                         </BaseTextArea>
@@ -235,7 +239,7 @@
         value: '',
         status: '',
         image: null as File | null,
-        description: '',
+        item_description: '',
         expires_at: '',
         purchased_at: ''
     });
@@ -380,6 +384,8 @@
         editingId.value = item.id; 
 
         Object.assign(formData, item);
+
+        console.log(item);
         
         formData.image = null; 
 
@@ -390,7 +396,7 @@
         Object.assign(formData, {
             name: '', brand: '', price: '', category_id: '', 
             quantity: 0, unit: '', value: '', status: '',
-            image: null, description: '', expires_at: '', purchased_at: ''
+            image: null, item_description: '', expires_at: '', purchased_at: ''
         });
     };
 
