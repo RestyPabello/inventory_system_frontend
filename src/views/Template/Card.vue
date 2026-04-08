@@ -96,6 +96,7 @@
                         <BaseImageUpload 
                             label="Product Image"
                             v-model="formData.image"
+                            :initial-preview="imagePreview"
                         />
                     </div>
                     <div class="space-y-4">
@@ -256,8 +257,9 @@
     const showErrorAlert   = ref(false);
     const alertMessage     = ref('');
 
-    const isEditMode = ref(false);
-    const editingId  = ref<number | null>(null);
+    const isEditMode   = ref(false);
+    const editingId    = ref<number | null>(null);
+    const imagePreview = ref<string | null>(null);
 
     const notifySuccess = (msg: string) => {
         alertMessage.value = msg;
@@ -381,13 +383,12 @@
 
     const handleEdit = (item: any) => {
         isEditMode.value = true;
-        editingId.value = item.id; 
+        editingId.value  = item.id; 
 
         Object.assign(formData, item);
 
-        console.log(item);
-        
-        formData.image = null; 
+        imagePreview.value = item.image_url;
+        formData.image     = null; 
 
         isModalOpen.value = true; 
     }

@@ -51,18 +51,34 @@
 </template>
 
 <script setup lang="ts">
-    import { ref } from 'vue'
+    import { ref, watch } from 'vue'
 
     const props = defineProps({
-        label: { type: String, default: '' },
-        modelValue: { type: [File, null], default: null }
-    })
+        label: { 
+            type: String, 
+            default: '' 
+        },
+        modelValue: { 
+            type: [File, null], 
+            default: null 
+        },
+        initialPreview: { 
+            type: String, 
+            default: null 
+        }
+    });
 
     const emit = defineEmits(['update:modelValue'])
 
     const isDragging = ref(false)
     const previewUrl = ref<string | null>(null)
-    const fileInput = ref<HTMLInputElement | null>(null)
+    const fileInput  = ref<HTMLInputElement | null>(null)
+
+    watch(() => props.initialPreview, (newVal) => {
+        previewUrl.value = newVal
+    }, { 
+        immediate: true 
+    })
         
     const processFile = (file: File | undefined) => {
         if (!file || !file.type.startsWith('image/')) return
