@@ -191,7 +191,7 @@
 <script setup lang="ts">
     import { ref, onMounted, computed, reactive } from 'vue';
     import type { FrontendItem } from '@/types/frontend/FrontendItem';
-    import { getItems, addItem } from '@/services/ItemService';
+    import { getItems, addItem, updateItem } from '@/services/ItemService';
     import AppPagination from '@/components/ui/AppPagination.vue';
     import SearchBar from '@/components/layout/header/SearchBar.vue';
     import Loading from './Loading.vue';
@@ -258,7 +258,7 @@
     const alertMessage     = ref('');
 
     const isEditMode   = ref(false);
-    const editingId    = ref<number | null>(null);
+    const itemId       = ref<number | null>(null);
     const imagePreview = ref<string | null>(null);
 
     const notifySuccess = (msg: string) => {
@@ -353,7 +353,7 @@
 
     const openModal = () => {
         isEditMode.value = false;
-        editingId.value = null;
+        itemId.value = null;
         resetFormData();
         isModalOpen.value = true;
     };
@@ -363,15 +363,19 @@
         isSubmitting.value = true;
 
         try {
-            await addItem(formData);
-            notifySuccess('Product has been saved successfully!');
-            
+            if (isEditMode.value && itemId.value) {
+                await updateItem(itemId.value, formData);
+                notifySuccess('Product has been updated successfully!');
+            } else {
+                await addItem(formData);
+                notifySuccess('Product has been saved successfully!');
+            }
+
             resetFormData();
             isModalOpen.value = false;
 
             currentPage.value = 1;
             await fetchItems();
-
         } catch (error: any) {
             const errorMessage = error.response?.data?.message || 'System is busy. Please try again later.';
             notifyError(errorMessage);
@@ -383,7 +387,7 @@
 
     const handleEdit = (item: any) => {
         isEditMode.value = true;
-        editingId.value  = item.id; 
+        itemId.value  = item.id; 
 
         Object.assign(formData, item);
 

@@ -75,6 +75,8 @@ export const addItem = async (data: CreateItemRequest): Promise<any> => {
 export const updateItem = async (id: number, data: UpdateItemRequest): Promise<any> => {
     const fd = new FormData();
 
+    fd.append('_method', 'PUT');
+    
     fd.append('name', data.name);
     fd.append('brand', data.brand);
     fd.append('price', String(data.price ?? 0));
@@ -91,7 +93,7 @@ export const updateItem = async (id: number, data: UpdateItemRequest): Promise<a
         fd.append('image', data.image);
     }
 
-    const result = await http.put<any>(`/items/${id}`, fd);
+    const result = await http.post<any>(`/items/${id}`, fd);
 
     const variant = result.data.variants?.[0] || {};
     const stock   = variant.stocks?.[0] || {};
