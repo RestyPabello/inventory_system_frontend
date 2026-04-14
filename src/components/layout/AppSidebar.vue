@@ -21,20 +21,20 @@
     >
       <router-link to="/">
         <img
-          v-if="isExpanded || isHovered || isMobileOpen"
-          class="dark:hidden"
-          src="/images/logo/logo.svg"
-          alt="Logo"
-          width="150"
-          height="40"
+            v-if="isExpanded || isHovered || isMobileOpen"
+            class="dark:hidden"
+            src="/images/logo/27.png"
+            alt="Logo"
+            width="200"
+            height="40"
         />
         <img
-          v-if="isExpanded || isHovered || isMobileOpen"
-          class="hidden dark:block"
-          src="/images/logo/logo-dark.svg"
-          alt="Logo"
-          width="150"
-          height="40"
+            v-if="isExpanded || isHovered || isMobileOpen"
+            class="hidden dark:block"
+            src="/images/logo/27-dark.png"
+            alt="Logo"
+            width="200"
+            height="40"
         />
         <img
           v-else
