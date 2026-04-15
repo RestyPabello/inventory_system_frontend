@@ -9,6 +9,9 @@ export const useAuthStore = defineStore('auth', {
         user: null as AuthUser | null,
         loading: false,
         error: null as string | null,
+        toastMessage: '' as string,
+        toastType: 'success' as 'success' | 'error' | 'warning',
+        showToast: false as boolean,
     }),
 
     getters: {
@@ -16,15 +19,27 @@ export const useAuthStore = defineStore('auth', {
     },
 
     actions: {
+        triggerToast(message: string, type: 'success' | 'error' | 'warning' = 'success') {
+            this.toastMessage = message;
+            this.toastType    = type;
+            this.showToast    = true;
+
+            setTimeout(() => {
+                this.showToast = false;
+            }, 3000);
+        },
+
         async login(payload: LoginRequest) {
             this.loading = true
-            this.error = null
+            this.error   = null
 
             try {
                 const data = await AuthService.login(payload)
 
                 this.token = data.access_token 
-                localStorage.setItem('access_token', data.access_token) 
+                localStorage.setItem('access_token', data.access_token)
+
+                this.triggerToast('Successfully logged in!', 'success')
 
                 router.push('/')
             } catch (err: any) {
@@ -32,6 +47,8 @@ export const useAuthStore = defineStore('auth', {
                 err.response?.data?.message ??
                 err.response?.data?.errors?.email?.[0] ??
                 'Invalid email or password.'
+
+                this.triggerToast(this.error as string, 'error')
             } finally {
                 this.loading = false
             }
