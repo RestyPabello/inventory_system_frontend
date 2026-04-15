@@ -150,12 +150,15 @@
                         >
                         </div>
                         <div>
-                            <button
+                            <BaseButton
                                 type="submit"
-                                class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+                                variant="primary"
+                                class="w-full py-3"
+                                :loading="isLoading"
+                                loading-label="Signing In..." 
                             >
                                 Sign In
-                            </button>
+                            </BaseButton>
                         </div>
                     </div>
                     </form>
@@ -244,6 +247,7 @@
     import CommonGridShape from '@/components/common/CommonGridShape.vue'
     import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
     import { useAuthStore } from '@/stores/auth'
+    import BaseButton from '@/components/ui/BaseButton.vue';
 
     const authStore = useAuthStore() 
 
@@ -251,19 +255,29 @@
     const password     = ref('')
     const showPassword = ref(false)
     const keepLoggedIn = ref(false)
+    const isLoading    = ref(false);
 
     const togglePasswordVisibility = () => {
         showPassword.value = !showPassword.value
     }
 
     const handleSubmit = () => {
-       authStore.login({
+        isLoading.value = true;
+
+        authStore.login({
             email: email.value,
             password: password.value,
-        }).then(() => {
+        })
+        .then(() => {
             if (!authStore.error) {
-            console.log('Login success!', authStore.user)
+                console.log('Login success!', authStore.user)
             }
         })
+        .catch((err) => {
+            console.error('Login failed:', err);
+        })
+        .finally(() => {
+            isLoading.value = false;
+        });
     }
 </script>

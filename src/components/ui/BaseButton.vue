@@ -5,11 +5,11 @@
     >
     <slot v-if="!loading" name="icon"></slot>
 
-    <span v-if="loading" class="loading loading-spinner loading-xs"></span>
-
     <slot>
         {{ loading && loadingLabel ? loadingLabel : label }}
     </slot>
+
+    <span v-if="loading" class="loading loading-spinner loading-xs"></span>
   </button>
 </template>
 
