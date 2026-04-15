@@ -157,20 +157,19 @@ export default router
 router.beforeEach((to, from, next) => {
     document.title = `TwentySeven | ${to.meta.title || 'App'}`
 
-
-    const authStore = useAuthStore()
+    const authStore       = useAuthStore()
     const isAuthenticated = authStore.isAuthenticated
-    const authPages = ['Signin', 'Signup']
+    const isAuthPage      = ['Signin', 'Signup'].includes(to.name as string)
 
-    const isAuthPage = authPages.includes(to.name as string)
-
-    if (!isAuthPage && !isAuthenticated) {
-        authStore.triggerToast('Access denied. Please login first.', 'error')
-        next({ name: 'Signin' })
+    switch (true) {
+        case (!isAuthPage && !isAuthenticated):
+            authStore.triggerToast('Access denied. Please login first.', 'error')
+            next({ name: 'Signin' })
+            break
+        case (isAuthPage && isAuthenticated):
+            next({ name: 'Inventory' })
+            break
+        default:
+            next()
     }
-    else if (isAuthPage && isAuthenticated) {
-        next({ name: 'Inventory' })
-    }
-
-    next()
 })
