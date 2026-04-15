@@ -154,6 +154,6 @@ const router = createRouter({
 export default router
 
 router.beforeEach((to, from, next) => {
-  document.title = `ER |  ${to.meta.title}`
+  document.title = `TwentySeven |  ${to.meta.title}`
   next()
 })
