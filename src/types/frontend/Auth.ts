@@ -4,8 +4,10 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-    token: string
-    user: AuthUser
+  message: string
+  expires_in: number
+  access_token: string
+  refresh_token: string
 }
 
 export interface AuthUser {

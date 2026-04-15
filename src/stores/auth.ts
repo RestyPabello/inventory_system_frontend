@@ -5,7 +5,7 @@ import type { AuthUser, LoginRequest } from '@/interfaces/Auth'
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
-        token: localStorage.getItem('token') ?? null as string | null,
+        token: localStorage.getItem('access_token') ?? null as string | null,
         user: null as AuthUser | null,
         loading: false,
         error: null as string | null,
@@ -23,9 +23,8 @@ export const useAuthStore = defineStore('auth', {
             try {
                 const data = await AuthService.login(payload)
 
-                this.token = data.token
-                this.user = data.user
-                localStorage.setItem('token', data.token)
+                this.token = data.access_token 
+                localStorage.setItem('access_token', data.access_token) 
 
                 router.push('/')
             } catch (err: any) {
@@ -46,7 +45,7 @@ export const useAuthStore = defineStore('auth', {
             } finally {
                 this.token = null
                 this.user = null
-                localStorage.removeItem('token')
+                localStorage.removeItem('access_token')
                 router.push('/signin')
             }
         },
