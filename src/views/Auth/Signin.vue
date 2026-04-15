@@ -149,14 +149,13 @@
                             >Forgot password?</router-link
                         >
                         </div>
-                        <!-- Button -->
                         <div>
-                        <button
-                            type="submit"
-                            class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
-                        >
-                            Sign In
-                        </button>
+                            <button
+                                type="submit"
+                                class="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+                            >
+                                Sign In
+                            </button>
                         </div>
                     </div>
                     </form>
@@ -241,24 +240,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import CommonGridShape from '@/components/common/CommonGridShape.vue'
-import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
-const email = ref('')
-const password = ref('')
-const showPassword = ref(false)
-const keepLoggedIn = ref(false)
+    import { ref } from 'vue'
+    import CommonGridShape from '@/components/common/CommonGridShape.vue'
+    import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
+    import { useAuthStore } from '@/stores/auth'
 
-const togglePasswordVisibility = () => {
-  showPassword.value = !showPassword.value
-}
+    const authStore = useAuthStore() 
 
-const handleSubmit = () => {
-  // Handle form submission
-  console.log('Form submitted', {
-    email: email.value,
-    password: password.value,
-    keepLoggedIn: keepLoggedIn.value,
-  })
-}
+    const email        = ref('')
+    const password     = ref('')
+    const showPassword = ref(false)
+    const keepLoggedIn = ref(false)
+
+    const togglePasswordVisibility = () => {
+        showPassword.value = !showPassword.value
+    }
+
+    const handleSubmit = () => {
+       authStore.login({
+            email: email.value,
+            password: password.value,
+        }).then(() => {
+            if (!authStore.error) {
+            console.log('Login success!', authStore.user)
+            }
+        })
+    }
 </script>
