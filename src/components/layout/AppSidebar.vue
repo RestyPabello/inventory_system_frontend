@@ -295,35 +295,32 @@ const menuGroups = [
   {
     title: "Others",
     items: [
-      {
-        icon: PieChartIcon,
-        name: "Charts",
-        subItems: [
-          { name: "Line Chart", path: "/line-chart", },
-          { name: "Bar Chart", path: "/bar-chart", },
-        ],
-      },
-      {
-        icon: BoxCubeIcon,
-        name: "Ui Elements",
-        subItems: [
-          { name: "Alerts", path: "/alerts", pro: false },
-          { name: "Avatars", path: "/avatars", pro: false },
-          { name: "Badge", path: "/badge", pro: false },
-          { name: "Buttons", path: "/buttons", pro: false },
-          { name: "Images", path: "/images", pro: false },
-          { name: "Videos", path: "/videos", pro: false },
-        ],
-      },
-      {
-        icon: PlugInIcon,
-        name: "Authentication",
-        subItems: [
-          { name: "Signin", path: "/signin", pro: false },
-          { name: "Signup", path: "/signup", pro: false },
-        ],
-      },
-      // ... Add other menu items here
+        {
+            icon: PieChartIcon,
+            name: "Charts",
+            subItems: [
+            { name: "Line Chart", path: "/line-chart", },
+            { name: "Bar Chart", path: "/bar-chart", },
+            ],
+        },
+        {
+            icon: BoxCubeIcon,
+            name: "Ui Elements",
+            subItems: [
+            { name: "Alerts", path: "/alerts", pro: false },
+            { name: "Avatars", path: "/avatars", pro: false },
+            { name: "Badge", path: "/badge", pro: false },
+            { name: "Buttons", path: "/buttons", pro: false },
+            { name: "Images", path: "/images", pro: false },
+            { name: "Videos", path: "/videos", pro: false },
+            ],
+        },
+        {
+            icon: UserCircleIcon,
+            name: "User Registration",
+            path: "/signup",
+        },
+        // ... Add other menu items here
     ],
   },
 ];
