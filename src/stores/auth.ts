@@ -61,8 +61,11 @@ export const useAuthStore = defineStore('auth', {
 
             } finally {
                 this.token = null
-                this.user = null
+                this.user  = null
+                
                 localStorage.removeItem('access_token')
+                this.triggerToast('Successfully logged out!', 'success')
+
                 router.push('/signin')
             }
         },

@@ -268,11 +268,7 @@
             email: email.value,
             password: password.value,
         })
-        .then(() => {
-            if (!authStore.error) {
-                console.log('Login success!', authStore.user)
-            }
-        })
+        .then(() => {})
         .catch((err) => {
             console.error('Login failed:', err);
         })

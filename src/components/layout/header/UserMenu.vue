@@ -42,60 +42,61 @@
           </router-link>
         </li>
       </ul>
-      <router-link
-        to="/signin"
-        @click="signOut"
-        class="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
-      >
-        <LogoutIcon
-          class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300"
-        />
-        Sign out
-      </router-link>
+        <button
+            @click="signOut"
+            class="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+        >
+            <LogoutIcon 
+                class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300" 
+            />
+            Sign out
+        </button>
     </div>
     <!-- Dropdown End -->
   </div>
 </template>
 
-<script setup>
-import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIcon } from '@/icons'
-import { RouterLink } from 'vue-router'
-import { ref, onMounted, onUnmounted } from 'vue'
+<script setup lang="ts">
+    import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIcon } from '@/icons'
+    import { RouterLink } from 'vue-router'
+    import { ref, onMounted, onUnmounted } from 'vue'
+    import { useAuthStore } from '@/stores/auth'
 
-const dropdownOpen = ref(false)
-const dropdownRef = ref(null)
+    const dropdownOpen = ref(false)
+    const dropdownRef  = ref(null)
 
-const menuItems = [
-  { href: '/profile', icon: UserCircleIcon, text: 'Edit profile' },
-  { href: '/chat', icon: SettingsIcon, text: 'Account settings' },
-  { href: '/profile', icon: InfoCircleIcon, text: 'Support' },
-]
+    const authStore = useAuthStore()
 
-const toggleDropdown = () => {
-  dropdownOpen.value = !dropdownOpen.value
-}
+    const menuItems = [
+        { href: '/profile', icon: UserCircleIcon, text: 'Edit profile' },
+        { href: '/chat', icon: SettingsIcon, text: 'Account settings' },
+        { href: '/profile', icon: InfoCircleIcon, text: 'Support' },
+    ]
 
-const closeDropdown = () => {
-  dropdownOpen.value = false
-}
+    const toggleDropdown = () => {
+    dropdownOpen.value = !dropdownOpen.value
+    }
 
-const signOut = () => {
-  // Implement sign out logic here
-  console.log('Signing out...')
-  closeDropdown()
-}
+    const closeDropdown = () => {
+        dropdownOpen.value = false
+    }
 
-const handleClickOutside = (event) => {
-  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
-    closeDropdown()
-  }
-}
+    const signOut = () => {
+        authStore.logout()
+        closeDropdown()
+    }
 
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
+    const handleClickOutside = (event) => {
+        if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+            closeDropdown()
+        }
+    }
 
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
+    onMounted(() => {
+        document.addEventListener('click', handleClickOutside)
+    })
+
+    onUnmounted(() => {
+        document.removeEventListener('click', handleClickOutside)
+    })
 </script>
