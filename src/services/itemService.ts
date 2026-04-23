@@ -1,5 +1,6 @@
 import { http } from './http';
-import type {  PaginatedItems, CreateItemRequest, UpdateItemRequest } from '@/types/frontend/FrontendItem';
+import type {  PaginatedItems, CreateItemRequest, UpdateItemRequest, ScannedItemRequest } from '@/types/frontend/FrontendItem';
+
 
 export const getItems = async (search: string = '', page: number = 1): Promise<PaginatedItems> => {
     const result = await http.get('/items', { params: { search, page } });
@@ -113,3 +114,16 @@ export const updateItem = async (id: number, data: UpdateItemRequest): Promise<a
         purchased_at: stock.purchased_at ?? "",
     };
 }
+
+export const scanItemImage = async (image: File): Promise<ScannedItemRequest> => {
+    const formData = new FormData();
+    formData.append('image', image);
+
+    const result = await http.post<{ data: ScannedItemRequest }>('/items/scan', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+
+    return result.data;
+};
