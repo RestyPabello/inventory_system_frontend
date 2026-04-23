@@ -55,3 +55,13 @@ export interface UpdateItemRequest {
     image?: File | null; 
 }
 
+export interface ScannedItemRequest {
+    name: string | null;
+    brand: string | null;
+    price: number | null;
+    category_id: number;
+    unit_value: number | null;
+    unit_name: string | null; 
+    expiry_date: string | null; 
+}
+
