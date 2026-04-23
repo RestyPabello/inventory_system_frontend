@@ -189,9 +189,10 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, onMounted, computed, reactive } from 'vue';
+    import { ref, onMounted, computed, reactive, watch } from 'vue';
     import type { FrontendItem } from '@/types/frontend/FrontendItem';
     import { getItems, addItem, updateItem } from '@/services/ItemService';
+    import { useItemStore } from '@/stores/itemStore';
     import AppPagination from '@/components/ui/AppPagination.vue';
     import SearchBar from '@/components/layout/header/SearchBar.vue';
     import Loading from './Loading.vue';
@@ -210,10 +211,12 @@
     });
 
     const categoryOptions = [
-        { label: 'Snacks', value: 2 },
-        { label: 'Drinks', value: 1 },
-        { label: 'Personal Care', value: 3 },
-        { label: 'Electronics', value: 4 }
+        { label: 'Food', value: 1 },
+        { label: 'Drinks', value: 2 },
+        { label: 'Persoanl Care', value: 3 },
+        { label: 'Household', value: 4 },
+        { label: 'Condiments', value: 5 },
+        { label: 'Dairy', value: 6 },
     ];
 
     const unitOptions = [
@@ -233,11 +236,11 @@
         name: '',
         brand: '',
         price: 0,
-        category_id: '',
+        category_id: 0,
         stock: '',
         quantity: 0,
         unit_id: '',
-        item_variant_value: '',
+        item_variant_value: 0,
         status: '',
         image: null as File | null,
         item_description: '',
@@ -260,6 +263,8 @@
     const isEditMode   = ref(false);
     const itemId       = ref<number | null>(null);
     const imagePreview = ref<string | null>(null);
+
+    const itemStore = useItemStore();
 
     const notifySuccess = (msg: string) => {
         alertMessage.value = msg;
@@ -301,6 +306,7 @@
     };
 
     onMounted(() => {
+        console.log('Component mounted!')
         fetchItems(); 
     });
 
@@ -404,6 +410,28 @@
             image: null, item_description: '', expires_at: '', purchased_at: ''
         });
     };
+
+    
+    const handleImageScan = async (file: File) => {
+       try {
+        const detected = await itemStore.scanProduct(file);
+        
+        if (detected) {
+            formData.name  = detected.name  ?? formData.name;
+            formData.brand = detected.brand ?? formData.brand;
+            formData.price = detected.price ?? formData.price;
+            formData.category_id = detected.category_id ?? formData.category_id;
+        }
+    } catch (error: any) {
+            notifyError(error?.response?.data?.message ?? "Invalid image. Please upload a product image.");
+        }
+    };
+
+    watch(() => formData.image, (newFile) => {
+        if (newFile instanceof File) {
+            handleImageScan(newFile);
+        }
+    });
 
 </script>
 
