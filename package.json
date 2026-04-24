@@ -13,6 +13,9 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.2.0",
+    "@fortawesome/free-solid-svg-icons": "^7.2.0",
+    "@fortawesome/vue-fontawesome": "^3.2.0",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
@@ -22,6 +25,8 @@
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.1.17",
+    "@zxing/browser": "^0.1.5",
+    "@zxing/library": "^0.21.3",
     "apexcharts": "^4.4.0",
     "axios": "^1.13.5",
     "dropzone": "^6.0.0-beta.2",
@@ -42,6 +47,7 @@
     "@tailwindcss/postcss": "^4.1.17",
     "@tsconfig/node22": "^22.0.0",
     "@types/node": "^22.10.7",
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vitejs/plugin-vue-jsx": "^4.1.1",
     "@vue/eslint-config-prettier": "^10.1.0",

@@ -10,8 +10,15 @@ import App from './App.vue'
 import router from './router'
 import VueApexCharts from 'vue3-apexcharts'
 import { createPinia } from 'pinia'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faBarcode, faQrcode } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const app = createApp(App)
+
+library.add(faBarcode, faQrcode)
+
+app.component('font-awesome-icon', FontAwesomeIcon)
 
 app.use(createPinia())
 app.use(router)
