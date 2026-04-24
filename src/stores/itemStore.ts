@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { scanItemImage } from '@/services/itemService';
+import { scanItemImage, scanItemBarcode  } from '@/services/itemService';
 import type { ScannedItemRequest } from '@/types/frontend/FrontendItem';
 
 export const useItemStore = defineStore('item', {
@@ -20,6 +20,16 @@ export const useItemStore = defineStore('item', {
                 throw error;
             } finally {
                 this.isScanning = false;
+            }
+        }, 
+
+        async scanBarcode(barcode: string) {
+            try {
+                const result = await scanItemBarcode(barcode);
+                return result;
+            } catch (error) {
+                console.error("Store Barcode Error:", error);
+                throw error;
             }
         }
     }
