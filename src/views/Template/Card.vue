@@ -98,6 +98,13 @@
                             v-model="formData.image"
                             :initial-preview="imagePreview"
                         />
+                        <div class="flex gap-2 mt-2">
+                            <BaseButton 
+                                @click="openBarcodeScanner" 
+                                class="flex gap-2 px-4 py-2 text-sm border border-dashed border-gray-500 rounded-lg hover:border-gray-300 transition-colors mt-3">
+                                <font-awesome-icon :icon="['fas', 'qrcode']" size="lg" /> Scan Barcode
+                            </BaseButton>
+                        </div>
                     </div>
                     <div class="space-y-4">
                         <BaseInput 
@@ -129,7 +136,6 @@
                             v-model="formData.expires_at" 
                         />
                     </div>
-
                     <div class="space-y-4">
                         <BaseInput 
                             label="Product Brand" 
@@ -171,6 +177,20 @@
                 </div>
             </div>
         </BaseModal>
+
+        <div 
+            v-if="isScannerOpen" 
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+        >
+            <div class="bg-white dark:bg-[#111827] rounded-xl p-4 w-full max-w-sm mx-4">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-black dark:text-white font-medium">Scan Barcode</span>
+                    <button @click="stopScanner" class="text-black dark:text-white hover:text-white">✕</button>
+                </div>
+                <video ref="videoRef" class="w-full rounded-lg" />
+                <p class="text-black dark:text-white text-sm text-center mt-2">Point camera at barcode</p>
+            </div>
+        </div>
     </div>
 
     <AppToast 
@@ -189,10 +209,11 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, onMounted, computed, reactive, watch } from 'vue';
+    import { ref, onMounted, computed, reactive, watch, nextTick  } from 'vue';
     import type { FrontendItem } from '@/types/frontend/FrontendItem';
     import { getItems, addItem, updateItem } from '@/services/ItemService';
     import { useItemStore } from '@/stores/itemStore';
+    import { BrowserMultiFormatReader } from '@zxing/browser';
     import AppPagination from '@/components/ui/AppPagination.vue';
     import SearchBar from '@/components/layout/header/SearchBar.vue';
     import Loading from './Loading.vue';
@@ -205,6 +226,7 @@
     import BaseImageUpload from '@/components/ui/BaseImageUpload.vue';
     import BaseEditButton from '@/components/ui/BaseEditButton.vue';
     import AppToast from '@/components/ui/AppToast.vue';
+    
 
     defineOptions({
         name: 'CardComponent',
@@ -239,7 +261,7 @@
         category_id: 0,
         stock: '',
         quantity: 0,
-        unit_id: '',
+        unit_id: 0,
         item_variant_value: 0,
         status: '',
         image: null as File | null,
@@ -263,6 +285,9 @@
     const isEditMode   = ref(false);
     const itemId       = ref<number | null>(null);
     const imagePreview = ref<string | null>(null);
+
+    const isScannerOpen = ref(false);
+    const videoRef      = ref<HTMLVideoElement | null>(null);
 
     const itemStore = useItemStore();
 
@@ -426,6 +451,75 @@
             notifyError(error?.response?.data?.message ?? "Invalid image. Please upload a product image.");
         }
     };
+
+    let codeReader: BrowserMultiFormatReader | null = null;
+
+    const openBarcodeScanner = async () => {
+        isScannerOpen.value = true;
+        await nextTick();
+        startScanner();
+    };
+
+    const startScanner = async () => {
+        codeReader = new BrowserMultiFormatReader();
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'environment' }
+            });
+
+            if (videoRef.value) {
+                videoRef.value.srcObject = stream;
+                await videoRef.value.play();
+            }
+
+            await codeReader.decodeFromVideoDevice(
+                undefined,
+                videoRef.value!,
+                async (result, error) => {
+                    if (result) {
+                        console.log('✅ Barcode detected:', result.getText()); 
+                        await handleBarcodeScan(result.getText());
+                        await stopScanner();
+                    }
+
+                    if (error) {
+                        console.log('scanning...', error.message);
+                    }
+                }
+            );
+        } catch (error) {
+            notifyError("Camera not accessible.");
+            await stopScanner();
+        }
+    };
+
+    const stopScanner = async () => {
+        if (videoRef.value && videoRef.value.srcObject) {
+            const stream = videoRef.value.srcObject as MediaStream;
+            stream.getTracks().forEach(track => track.stop());
+            videoRef.value.srcObject = null;
+        }
+
+        codeReader = null;
+        isScannerOpen.value = false;
+    };
+
+    const handleBarcodeScan = async (barcode: string) => {
+        try {
+            const detected = await itemStore.scanBarcode(barcode);
+            if (detected) {
+                formData.name              = detected.name              ?? formData.name;
+                formData.brand             = detected.brand             ?? formData.brand;
+                formData.price             = detected.price             ?? formData.price;
+                formData.category_id       = detected.category_id       ?? formData.category_id;
+                formData.unit_id           = detected.unit_id           ?? formData.unit_id;
+                formData.item_variant_value = detected.item_variant_value ?? formData.item_variant_value;
+            }
+        } catch (error: any) {
+            notifyError(error?.response?.data?.message ?? "Barcode not found.");
+        }
+    };
+
 
     watch(() => formData.image, (newFile) => {
         if (newFile instanceof File) {
