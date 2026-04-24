@@ -65,3 +65,11 @@ export interface ScannedItemRequest {
     expiry_date: string | null; 
 }
 
+export interface ScannedBarcodeRequest {
+    name: string | null;
+    brand: string | null;
+    price: number | null;
+    category_id: number | null;
+    unit_id: number | null;
+    item_variant_value: number | null;
+}
