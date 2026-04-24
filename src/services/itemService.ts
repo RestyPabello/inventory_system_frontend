@@ -1,5 +1,11 @@
 import { http } from './http';
-import type {  PaginatedItems, CreateItemRequest, UpdateItemRequest, ScannedItemRequest } from '@/types/frontend/FrontendItem';
+import type { 
+    PaginatedItems, 
+    CreateItemRequest, 
+    UpdateItemRequest, 
+    ScannedItemRequest,
+    ScannedBarcodeRequest,
+} from '@/types/frontend/FrontendItem';
 
 
 export const getItems = async (search: string = '', page: number = 1): Promise<PaginatedItems> => {
@@ -125,5 +131,11 @@ export const scanItemImage = async (image: File): Promise<ScannedItemRequest> =>
         },
     });
 
+    return result.data;
+};
+
+export const scanItemBarcode = async (barcode: string): Promise<ScannedBarcodeRequest> => {
+    const result = await http.get<{ data: ScannedBarcodeRequest }>(`/items/barcode/${barcode}`);
+    
     return result.data;
 };
